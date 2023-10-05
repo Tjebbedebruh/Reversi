@@ -1,7 +1,10 @@
+using Reversi;
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Xml.Linq;
+
+
 
 //form maken
 Form scherm = new Form();
@@ -25,8 +28,8 @@ Brush grijsBrush = new SolidBrush(grijs);
 Pen gridPen = new Pen(Color.LightGray, 2);
 
 //tijdelijk:
-int aantalBlauweStenen = 0;
-int aantalRodeStenen = 0;
+int aantalBlauweStenen = 2;
+int aantalRodeStenen = 2;
 
 
 //Knoppen en labels aangeven
@@ -50,7 +53,7 @@ nieuwKnop.Location = new Point(100, 50);
 nieuwKnop.Size = new Size(275, 50);
 
 //helpKnop
-helpKnop.Text = "help";
+helpKnop.Text = "Help";
 helpKnop.FlatStyle = FlatStyle.Flat;
 helpKnop.ForeColor = Color.White;
 helpKnop.BackColor = Color.DarkGray;
@@ -93,6 +96,8 @@ wieZet.Size = new Size(600, 600);
 //grid waardes
 int aantalVakjes = 4;
 int breedteVakjes = wieZet.Width / aantalVakjes;
+int aanZet = 0; //0 = rood, 1 = blauw
+List<Steen> steenList = new List<Steen>();
 
 //waar geklikt is
 Point hier = new Point(0, 0);
@@ -102,14 +107,60 @@ Bitmap veld = new Bitmap(600, 600);
 Graphics Gveld = Graphics.FromImage(veld);
 wieZet.Image = veld;
 
-//grid tekenen
-for (int i = 0; i < breedteVakjes; i++)
+//grid tekenen en objecten aanmaken
+for (int i = 0; i < aantalVakjes; i++)
 {
-    for (int j = 0; j < breedteVakjes; j++)
+    for (int j = 0; j < aantalVakjes; j++)
     {
-        Gveld.DrawRectangle(gridPen, i * breedteVakjes, j * breedteVakjes, breedteVakjes, breedteVakjes);
+        //raster tekenen
+        Gveld.DrawRectangle(gridPen, j * breedteVakjes, i * breedteVakjes, breedteVakjes, breedteVakjes);
+
+        //object aanmaken voor elke stip in het raster
+        Steen steen = new Steen(new Point(j, i), 2, false, false);
+
+        //steen toevoegen aan de lijst van alle stenen
+        steenList.Add(steen);
     }
 }
+
+//door alle vakjes loopen om te checken voor de 4 middelste
+for (int i = 0; i < aantalVakjes; i++)
+{
+    for (int j = 0; j < aantalVakjes; j++)
+    {
+        //tekenen van de 4 middelste cirkels en hun objecten updaten
+        int tijdelijk1 = aantalVakjes / 2;
+        int tijdelijk2 = aantalVakjes / 2 - 1;
+        if (i == tijdelijk2 && j == tijdelijk2)
+        {
+            Gveld.FillEllipse(blauwBrush, tijdelijk2 * breedteVakjes, tijdelijk2 * breedteVakjes, breedteVakjes, breedteVakjes);
+            steenList[j * aantalVakjes + i].Kleur = 0;
+            steenList[j * aantalVakjes + i].Bezet = true;
+        }
+        else if (i == tijdelijk2 && j == tijdelijk1)
+        {
+            Gveld.FillEllipse(roodBrush, tijdelijk1 * breedteVakjes, tijdelijk2 * breedteVakjes, breedteVakjes, breedteVakjes);
+            steenList[j * aantalVakjes + i].Kleur = 1;
+            steenList[j * aantalVakjes + i].Bezet = true;
+        }
+        else if (i == tijdelijk1 && j == tijdelijk2)
+        {
+            Gveld.FillEllipse(roodBrush, tijdelijk2 * breedteVakjes, tijdelijk1 * breedteVakjes, breedteVakjes, breedteVakjes);
+            steenList[j * aantalVakjes + i].Kleur = 1;
+            steenList[j * aantalVakjes + i].Bezet = true;
+        }
+        else if (i == tijdelijk1 && j == tijdelijk1)
+        {
+            Gveld.FillEllipse(blauwBrush, tijdelijk1 * breedteVakjes, tijdelijk1 * breedteVakjes, breedteVakjes, breedteVakjes);
+            steenList[j * aantalVakjes + i].Kleur = 0;
+            steenList[j * aantalVakjes + i].Bezet = true;
+        }
+    }
+}
+Debug.WriteLine(steenList[5].Kleur);
+Debug.WriteLine(steenList[6].Kleur);
+Debug.WriteLine(steenList[9].Kleur);
+Debug.WriteLine(steenList[10].Kleur);
 
 //tekenReversi (AKA de bolletjes tekenen)
 void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
@@ -120,7 +171,26 @@ void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
         {
             if (gekliktVakjeX == i && gekliktVakjeY == j)
             {
-               Gveld.FillEllipse(roodBrush, i * breedteVakjes, j * breedteVakjes, breedteVakjes, breedteVakjes);
+                //steen opzoeken in de steenlist
+                Steen obj = steenList[gekliktVakjeY * aantalVakjes + i];
+
+                //waardes van het object van deze steen aanpassen
+                obj.Bezet = true;
+                obj.Kleur = aanZet;
+
+                //deze steen inkleuren
+                if (obj.Kleur == 0)
+                {
+                    Gveld.FillEllipse(roodBrush, obj.Locatie.X * breedteVakjes, obj.Locatie.Y * breedteVakjes, breedteVakjes, breedteVakjes);
+                }
+                else if (obj.Kleur == 1)
+                {
+                    Gveld.FillEllipse(blauwBrush, obj.Locatie.X * breedteVakjes, obj.Locatie.Y * breedteVakjes, breedteVakjes, breedteVakjes);
+                }
+                else
+                {
+                    break;
+                }
             }
         }
     }
@@ -130,14 +200,25 @@ void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
 // muisposities aangeven
 void mousePosition(object sender, MouseEventArgs muis)
 {
+    //locatie van muisclick updaten
     hier = muis.Location;
 
     int gekliktVakjeX = muis.X / breedteVakjes;
-    int gekliktVakjeY = muis.Y / breedteVakjes;
+    int gekliktVakjeY = muis.Y / breedteVakjes;    
 
     tekenReversi(gekliktVakjeX, gekliktVakjeY);
 
     scherm.Invalidate();
+
+    //wie aanzet is updaten (dus of blauw of rood aan zet is)
+    if (aanZet == 0)
+    {
+        aanZet++;
+    }
+    else if (aanZet == 1)
+    {
+        aanZet--;
+    }
 }
     
 wieZet.MouseClick += mousePosition;
