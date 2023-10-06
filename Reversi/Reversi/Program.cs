@@ -98,6 +98,8 @@ int aantalVakjes = 4;
 int breedteVakjes = wieZet.Width / aantalVakjes;
 int aanZet = 0; //0 = rood, 1 = blauw
 List<Steen> steenList = new List<Steen>();
+List<Steen> roodList = new List<Steen>();
+List<Steen> blauwList = new List<Steen>();
 
 //waar geklikt is
 Point hier = new Point(0, 0);
@@ -107,60 +109,62 @@ Bitmap veld = new Bitmap(600, 600);
 Graphics Gveld = Graphics.FromImage(veld);
 wieZet.Image = veld;
 
-//grid tekenen en objecten aanmaken
-for (int i = 0; i < aantalVakjes; i++)
+void reset()
 {
-    for (int j = 0; j < aantalVakjes; j++)
+    steenList.Clear();
+    //grid tekenen en objecten aanmaken
+    for (int i = 0; i < aantalVakjes; i++)
     {
-        //raster tekenen
-        Gveld.DrawRectangle(gridPen, j * breedteVakjes, i * breedteVakjes, breedteVakjes, breedteVakjes);
+        for (int j = 0; j < aantalVakjes; j++)
+        {
+            //raster tekenen
+            Gveld.DrawRectangle(gridPen, j * breedteVakjes, i * breedteVakjes, breedteVakjes, breedteVakjes);
 
-        //object aanmaken voor elke stip in het raster
-        Steen steen = new Steen(new Point(j, i), 2, false, false);
+            //object aanmaken voor elke stip in het raster
+            Steen steen = new Steen(new Point(j, i), 2, false, false);
 
-        //steen toevoegen aan de lijst van alle stenen
-        steenList.Add(steen);
-    }
-}
-
-//door alle vakjes loopen om te checken voor de 4 middelste
-for (int i = 0; i < aantalVakjes; i++)
-{
-    for (int j = 0; j < aantalVakjes; j++)
-    {
-        //tekenen van de 4 middelste cirkels en hun objecten updaten
-        int tijdelijk1 = aantalVakjes / 2;
-        int tijdelijk2 = aantalVakjes / 2 - 1;
-        if (i == tijdelijk2 && j == tijdelijk2)
-        {
-            Gveld.FillEllipse(blauwBrush, tijdelijk2 * breedteVakjes, tijdelijk2 * breedteVakjes, breedteVakjes, breedteVakjes);
-            steenList[j * aantalVakjes + i].Kleur = 0;
-            steenList[j * aantalVakjes + i].Bezet = true;
-        }
-        else if (i == tijdelijk2 && j == tijdelijk1)
-        {
-            Gveld.FillEllipse(roodBrush, tijdelijk1 * breedteVakjes, tijdelijk2 * breedteVakjes, breedteVakjes, breedteVakjes);
-            steenList[j * aantalVakjes + i].Kleur = 1;
-            steenList[j * aantalVakjes + i].Bezet = true;
-        }
-        else if (i == tijdelijk1 && j == tijdelijk2)
-        {
-            Gveld.FillEllipse(roodBrush, tijdelijk2 * breedteVakjes, tijdelijk1 * breedteVakjes, breedteVakjes, breedteVakjes);
-            steenList[j * aantalVakjes + i].Kleur = 1;
-            steenList[j * aantalVakjes + i].Bezet = true;
-        }
-        else if (i == tijdelijk1 && j == tijdelijk1)
-        {
-            Gveld.FillEllipse(blauwBrush, tijdelijk1 * breedteVakjes, tijdelijk1 * breedteVakjes, breedteVakjes, breedteVakjes);
-            steenList[j * aantalVakjes + i].Kleur = 0;
-            steenList[j * aantalVakjes + i].Bezet = true;
+            //steen toevoegen aan de lijst van alle stenen
+            steenList.Add(steen);
         }
     }
+
+    //door alle vakjes loopen om te checken voor de 4 middelste
+    for (int i = 0; i < aantalVakjes; i++)
+    {
+        for (int j = 0; j < aantalVakjes; j++)
+        {
+            //tekenen van de 4 middelste cirkels en hun objecten updaten
+            int tijdelijk1 = aantalVakjes / 2;
+            int tijdelijk2 = aantalVakjes / 2 - 1;
+            if (i == tijdelijk2 && j == tijdelijk2)
+            {
+                Gveld.FillEllipse(blauwBrush, tijdelijk2 * breedteVakjes, tijdelijk2 * breedteVakjes, breedteVakjes, breedteVakjes);
+                steenList[j * aantalVakjes + i].Kleur = 0;
+                steenList[j * aantalVakjes + i].Bezet = true;
+            }
+            else if (i == tijdelijk2 && j == tijdelijk1)
+            {
+                Gveld.FillEllipse(roodBrush, tijdelijk1 * breedteVakjes, tijdelijk2 * breedteVakjes, breedteVakjes, breedteVakjes);
+                steenList[j * aantalVakjes + i].Kleur = 1;
+                steenList[j * aantalVakjes + i].Bezet = true;
+            }
+            else if (i == tijdelijk1 && j == tijdelijk2)
+            {
+                Gveld.FillEllipse(roodBrush, tijdelijk2 * breedteVakjes, tijdelijk1 * breedteVakjes, breedteVakjes, breedteVakjes);
+                steenList[j * aantalVakjes + i].Kleur = 1;
+                steenList[j * aantalVakjes + i].Bezet = true;
+            }
+            else if (i == tijdelijk1 && j == tijdelijk1)
+            {
+                Gveld.FillEllipse(blauwBrush, tijdelijk1 * breedteVakjes, tijdelijk1 * breedteVakjes, breedteVakjes, breedteVakjes);
+                steenList[j * aantalVakjes + i].Kleur = 0;
+                steenList[j * aantalVakjes + i].Bezet = true;
+            }
+        }
+    }
 }
-Debug.WriteLine(steenList[5].Kleur);
-Debug.WriteLine(steenList[6].Kleur);
-Debug.WriteLine(steenList[9].Kleur);
-Debug.WriteLine(steenList[10].Kleur);
+reset();
+
 
 //tekenReversi (AKA de bolletjes tekenen)
 void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
@@ -169,6 +173,17 @@ void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
     {
         for (int j = 0; j < breedteVakjes; j++)
         {
+            
+            /*
+            if (steenList[gekliktVakjeY * aantalVakjes + i].Kleur == 0)
+            {
+                roodList.Add(obj);
+            }
+            else if (steenList[gekliktVakjeY * aantalVakjes + i].Kleur == 1)
+            {
+                blauwList.Add(obj);
+            }
+            */
             if (gekliktVakjeX == i && gekliktVakjeY == j)
             {
                 //steen opzoeken in de steenlist
@@ -223,12 +238,6 @@ void mousePosition(object sender, MouseEventArgs muis)
     
 wieZet.MouseClick += mousePosition;
 
-
-//Actie voor de knop
-void klikKnop(object sender, EventArgs klik)
-{
-
-}
 
 
 
