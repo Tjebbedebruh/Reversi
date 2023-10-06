@@ -109,8 +109,10 @@ Bitmap veld = new Bitmap(600, 600);
 Graphics Gveld = Graphics.FromImage(veld);
 wieZet.Image = veld;
 
-void reset()
+void reset(object o, EventArgs e)
 {
+    Gveld.Clear(Color.White);
+    wieZet.Invalidate();
     steenList.Clear();
     //grid tekenen en objecten aanmaken
     for (int i = 0; i < aantalVakjes; i++)
@@ -163,18 +165,20 @@ void reset()
         }
     }
 }
-reset();
+reset(null, null);
 
 
 //tekenReversi (AKA de bolletjes tekenen)
 void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
 {
-    for (int i = 0; i < breedteVakjes; i++)
+    for (int i = 0; i < aantalVakjes; i++)
     {
-        for (int j = 0; j < breedteVakjes; j++)
+        for (int j = 0; j < aantalVakjes; j++)
         {
+            //steen opzoeken in de steenlist
+            Steen obj = steenList[gekliktVakjeY * aantalVakjes + i];
+
             
-            /*
             if (steenList[gekliktVakjeY * aantalVakjes + i].Kleur == 0)
             {
                 roodList.Add(obj);
@@ -183,11 +187,10 @@ void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
             {
                 blauwList.Add(obj);
             }
-            */
-            if (gekliktVakjeX == i && gekliktVakjeY == j)
+            
+            if (gekliktVakjeX == i && gekliktVakjeY == j && obj.Bezet == false)
             {
-                //steen opzoeken in de steenlist
-                Steen obj = steenList[gekliktVakjeY * aantalVakjes + i];
+                
 
                 //waardes van het object van deze steen aanpassen
                 obj.Bezet = true;
@@ -237,7 +240,7 @@ void mousePosition(object sender, MouseEventArgs muis)
 }
     
 wieZet.MouseClick += mousePosition;
-
+nieuwKnop.Click += reset;
 
 
 
