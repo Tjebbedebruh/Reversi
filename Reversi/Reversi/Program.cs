@@ -111,10 +111,19 @@ wieZet.Image = veld;
 
 void reset(object o, EventArgs e)
 {
+    //speelveld resetten
     Gveld.Clear(Color.White);
     wieZet.Invalidate();
     steenList.Clear();
-    //grid tekenen en objecten aanmaken
+    aanZet = 0;
+
+    //score resetten    
+    aantalRodeStenen = 2;
+    aantalBlauweStenen = 2;
+    blauwStenen.Text = $"{aantalBlauweStenen} stenen";
+    roodStenen.Text = $"{aantalRodeStenen} stenen";
+
+    //grid tekenen en objecten (opnieuw) aanmaken
     for (int i = 0; i < aantalVakjes; i++)
     {
         for (int j = 0; j < aantalVakjes; j++)
@@ -190,7 +199,24 @@ void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
             
             if (gekliktVakjeX == i && gekliktVakjeY == j && obj.Bezet == false)
             {
-                
+                //score updaten
+                blauwStenen.Text = $"{aantalBlauweStenen} stenen";
+                roodStenen.Text = $"{aantalRodeStenen} stenen";
+
+                //wie aanzet is updaten (dus of blauw of rood aan zet is)
+                if (aanZet == 0)
+                {
+                    aanZet++;
+                    aantalRodeStenen++;
+                }
+                else if (aanZet == 1)
+                {
+                    aanZet--;
+                    aantalBlauweStenen++;
+                }
+                //score updaten
+                blauwStenen.Text = $"{aantalBlauweStenen} stenen";
+                roodStenen.Text = $"{aantalRodeStenen} stenen";
 
                 //waardes van het object van deze steen aanpassen
                 obj.Bezet = true;
@@ -224,19 +250,12 @@ void mousePosition(object sender, MouseEventArgs muis)
     int gekliktVakjeX = muis.X / breedteVakjes;
     int gekliktVakjeY = muis.Y / breedteVakjes;    
 
+
     tekenReversi(gekliktVakjeX, gekliktVakjeY);
 
+    
     scherm.Invalidate();
 
-    //wie aanzet is updaten (dus of blauw of rood aan zet is)
-    if (aanZet == 0)
-    {
-        aanZet++;
-    }
-    else if (aanZet == 1)
-    {
-        aanZet--;
-    }
 }
     
 wieZet.MouseClick += mousePosition;
