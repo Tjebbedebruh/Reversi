@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Reversi",
+    "\\Reversi\\Reversi"
   ],
-  "SelectedNode": "\\Reversi.sln",
+  "SelectedNode": "\\Reversi\\Reversi\\Program.cs",
   "PreviewInSolutionExplorer": false
 }
