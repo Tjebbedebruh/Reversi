@@ -27,22 +27,21 @@ Brush blauwBrush = new SolidBrush(blauw);
 Brush grijsBrush = new SolidBrush(grijs);
 Pen gridPen = new Pen(Color.LightGray, 2);
 
-//tijdelijk:
-int aantalBlauweStenen = 2;
-int aantalRodeStenen = 2;
-
-
 //Knoppen en labels aangeven
 Button nieuwKnop = new Button();
 Button helpKnop = new Button();
 Label roodStenen = new Label();
 Label blauwStenen = new Label();
+Label aanZetLabel = new Label();
 Label wieZet = new Label();
+Label helpGrid = new Label();
 scherm.Controls.Add(nieuwKnop);
 scherm.Controls.Add(helpKnop);
 scherm.Controls.Add(roodStenen);
 scherm.Controls.Add(blauwStenen);
+scherm.Controls.Add(aanZetLabel);
 scherm.Controls.Add(wieZet);
+scherm.Controls.Add(helpGrid);
 
 //nieuwKnop
 nieuwKnop.Text = "Nieuw spel";
@@ -60,6 +59,7 @@ helpKnop.BackColor = Color.DarkGray;
 helpKnop.Location = new Point(425, 50);
 helpKnop.Size = new Size(275, 50);
 
+
 //Cirkels met stenenaantal + tekst
 Label afbeelding = new Label();
 scherm.Controls.Add(afbeelding);
@@ -69,6 +69,12 @@ afbeelding.Image = window;
 Graphics G = Graphics.FromImage(window);
 G.FillEllipse(blauwBrush, 100, 130, 60, 60);
 G.FillEllipse(roodBrush, 100, 200, 60, 60);
+
+//counter variablen
+int aantalBlauweStenen = 2;
+int aantalRodeStenen = 2;
+int aanZet = 1; //0 = rood, 1 = blauw 2 = grijs
+bool help = false;
 
 //Blauwe stenen
 blauwStenen.Text = $"{aantalBlauweStenen} stenen";
@@ -84,6 +90,12 @@ roodStenen.Location = new Point(170, 220);
 roodStenen.Size = new Size(100, 60);
 roodStenen.Font = font;
 
+//Aaanzet Label
+aanZetLabel.Text = "Blauw is aan zet";
+aanZetLabel.Location = new Point(500,130);
+aanZetLabel.Size = new Size(160,60);
+aanZetLabel.Font = font;
+
 //Placeholder
 G.FillRectangle(grijsBrush, 100, 300, 600, 600);
 
@@ -91,37 +103,67 @@ G.FillRectangle(grijsBrush, 100, 300, 600, 600);
 wieZet.Location = new Point(100, 300);
 wieZet.Size = new Size(600, 600);
 
+//GhelpGrid
+helpGrid.Location = new Point(100, 300);
+helpGrid.Size = new Size(600, 600);
+
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 //grid waardes
 int aantalVakjes = 4;
 int breedteVakjes = wieZet.Width / aantalVakjes;
-int aanZet = 0; //0 = rood, 1 = blauw
-List<Steen> steenList = new List<Steen>();
-List<Steen> roodList = new List<Steen>();
-List<Steen> blauwList = new List<Steen>();
 
-//waar geklikt is
+//publieke waardes
 Point hier = new Point(0, 0);
+
+//lijsten
+List<Steen> steenList = new List<Steen>();
+
 
 //aparte graphics voor het speelveld
 Bitmap veld = new Bitmap(600, 600);
 Graphics Gveld = Graphics.FromImage(veld);
 wieZet.Image = veld;
 
+
+Bitmap grid = new Bitmap(600, 600);
+Graphics Ggrid = Graphics.FromImage(grid);
+helpGrid.Image = grid;
+
+
+//help knop
+helpKnop.Click += helpStatus;
+void helpStatus(object o, EventArgs e)
+{
+    if (help == true)
+    {
+        help = !help;
+    }
+    else if (help == false)
+    {
+        help = !help;
+        placeable();        
+    }
+}
+
+
+
+//reset het hele spel en scores
 void reset(object o, EventArgs e)
 {
     //speelveld resetten
     Gveld.Clear(Color.White);
+    Ggrid.Clear(Color.Transparent);
     wieZet.Invalidate();
     steenList.Clear();
-    aanZet = 0;
+    aanZet = 1;
 
     //score resetten    
     aantalRodeStenen = 2;
     aantalBlauweStenen = 2;
     blauwStenen.Text = $"{aantalBlauweStenen} stenen";
     roodStenen.Text = $"{aantalRodeStenen} stenen";
+    aanZetLabel.Text = "Blauw is aan zet";
 
     //grid tekenen en objecten (opnieuw) aanmaken
     for (int i = 0; i < aantalVakjes; i++)
@@ -136,45 +178,135 @@ void reset(object o, EventArgs e)
 
             //steen toevoegen aan de lijst van alle stenen
             steenList.Add(steen);
+
         }
     }
+
+    
 
     //door alle vakjes loopen om te checken voor de 4 middelste
     for (int i = 0; i < aantalVakjes; i++)
     {
         for (int j = 0; j < aantalVakjes; j++)
         {
+            Steen tijdelijkObj = steenList[i * aantalVakjes + j];
             //tekenen van de 4 middelste cirkels en hun objecten updaten
             int tijdelijk1 = aantalVakjes / 2;
             int tijdelijk2 = aantalVakjes / 2 - 1;
             if (i == tijdelijk2 && j == tijdelijk2)
             {
-                Gveld.FillEllipse(blauwBrush, tijdelijk2 * breedteVakjes, tijdelijk2 * breedteVakjes, breedteVakjes, breedteVakjes);
-                steenList[j * aantalVakjes + i].Kleur = 0;
-                steenList[j * aantalVakjes + i].Bezet = true;
+                tijdelijkObj.Kleur = 1;
+                tijdelijkObj.Bezet = true;
+                tijdelijkObj.Plaatsbaar = false;
+                Gveld.FillEllipse(blauwBrush, tijdelijkObj.Locatie.X * breedteVakjes, tijdelijkObj.Locatie.Y * breedteVakjes, breedteVakjes, breedteVakjes);                
             }
             else if (i == tijdelijk2 && j == tijdelijk1)
             {
-                Gveld.FillEllipse(roodBrush, tijdelijk1 * breedteVakjes, tijdelijk2 * breedteVakjes, breedteVakjes, breedteVakjes);
-                steenList[j * aantalVakjes + i].Kleur = 1;
-                steenList[j * aantalVakjes + i].Bezet = true;
+                tijdelijkObj.Kleur = 0;
+                tijdelijkObj.Bezet = true;
+                tijdelijkObj.Plaatsbaar = false;
+                Gveld.FillEllipse(roodBrush, tijdelijkObj.Locatie.X * breedteVakjes, tijdelijkObj.Locatie.Y * breedteVakjes, breedteVakjes, breedteVakjes);
             }
             else if (i == tijdelijk1 && j == tijdelijk2)
             {
-                Gveld.FillEllipse(roodBrush, tijdelijk2 * breedteVakjes, tijdelijk1 * breedteVakjes, breedteVakjes, breedteVakjes);
-                steenList[j * aantalVakjes + i].Kleur = 1;
-                steenList[j * aantalVakjes + i].Bezet = true;
+                tijdelijkObj.Kleur = 0;
+                tijdelijkObj.Bezet = true;
+                tijdelijkObj.Plaatsbaar = false;
+                Gveld.FillEllipse(roodBrush, tijdelijkObj.Locatie.X * breedteVakjes, tijdelijkObj.Locatie.Y * breedteVakjes, breedteVakjes, breedteVakjes);
             }
             else if (i == tijdelijk1 && j == tijdelijk1)
             {
-                Gveld.FillEllipse(blauwBrush, tijdelijk1 * breedteVakjes, tijdelijk1 * breedteVakjes, breedteVakjes, breedteVakjes);
-                steenList[j * aantalVakjes + i].Kleur = 0;
-                steenList[j * aantalVakjes + i].Bezet = true;
+                tijdelijkObj.Kleur = 1;
+                tijdelijkObj.Bezet = true;
+                tijdelijkObj.Plaatsbaar = false;
+                Gveld.FillEllipse(blauwBrush, tijdelijkObj.Locatie.X * breedteVakjes, tijdelijkObj.Locatie.Y * breedteVakjes, breedteVakjes, breedteVakjes);
             }
         }
     }
 }
 reset(null, null);
+
+
+void placeable()
+{
+    
+    //als help geactiveerd is dan runt die de placable loop
+    if (help == true)
+    {
+        //alle vakjes van de grid worden nagelopen om te checken 
+        for (int i = 0; i < aantalVakjes; i++)
+        {
+            for (int j = 0; j < aantalVakjes; j++)
+            {
+                bool plaatsbaar = false;
+                Steen mogelijkPlaceableSteen = steenList[i * aantalVakjes + j];
+
+                if (mogelijkPlaceableSteen.Bezet != true)
+                {
+                    //alle vakjes om dat ene gecheckte vakje worden gecheckt of ze de tegenovergestelde kleur bevatten
+                    for (int xOffset = -1; xOffset <= 1; xOffset++)
+                    {
+                        for (int yOffset = -1; yOffset <= 1; yOffset++)
+                        {
+                            // Skip the het middelste rondje
+                            if (xOffset == 0 && yOffset == 0)
+                            {
+                                continue;
+                            }
+
+                            int neighborX = j + xOffset;
+                            int neighborY = i + yOffset;
+
+                            // check of de neighbor coordinaten in het grid vallen
+                            if (neighborX >= 0 && neighborX < aantalVakjes && neighborY >= 0 && neighborY < aantalVakjes)
+                            {
+                                Steen buurmanSteen = steenList[neighborY * aantalVakjes + neighborX];
+
+                                if (buurmanSteen.Kleur == 2 || buurmanSteen.Kleur == aanZet)
+                                {
+                                    mogelijkPlaceableSteen.Plaatsbaar = false;
+                                }
+                                else if (buurmanSteen.Kleur != aanZet)
+                                {
+                                    Debug.WriteLine($"{i},{j}    mijn eigen kleur is {mogelijkPlaceableSteen.Kleur}    {aanZet} is aan zet      mijn buurman is van een andere kleur!");
+
+                                    //checken of de het steentje naast die buurman niet ook een bepaalde kleur heeft
+                                    for (int k = 1; k < aantalVakjes - 1; k++)
+                                    {
+                                        if ((yOffset * k + neighborY) >= 0 && (yOffset * k + neighborY) <= aantalVakjes && (xOffset * k + neighborX) >= 0 && (xOffset * k + neighborX) <= aantalVakjes)
+                                        {
+                                            try
+                                            {
+                                                Steen buurmanBuurmanSteen = steenList[(yOffset * k + neighborY) * aantalVakjes + (xOffset * k + neighborX)];
+                                                if (buurmanBuurmanSteen.Kleur == 2)
+                                                {
+                                                    mogelijkPlaceableSteen.Plaatsbaar = false;
+                                                    continue;
+                                                }
+                                                else if (buurmanBuurmanSteen.Kleur == aanZet)
+                                                {
+                                                    plaatsbaar = true;
+                                                    Gveld.DrawEllipse(gridPen, j * breedteVakjes, i * breedteVakjes, breedteVakjes, breedteVakjes);
+                                                    mogelijkPlaceableSteen.Plaatsbaar = true;
+                                                }
+                                            } catch (Exception e) { }
+                                        }
+                                    }
+
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    wieZet.Invalidate();
+}
+
+
 
 
 //tekenReversi (AKA de bolletjes tekenen)
@@ -185,42 +317,16 @@ void tekenReversi(int gekliktVakjeX, int gekliktVakjeY)
         for (int j = 0; j < aantalVakjes; j++)
         {
             //steen opzoeken in de steenlist
-            Steen obj = steenList[gekliktVakjeY * aantalVakjes + i];
+            Steen obj = steenList[gekliktVakjeY * aantalVakjes + j];
 
-            
-            if (steenList[gekliktVakjeY * aantalVakjes + i].Kleur == 0)
+                   
+            if (gekliktVakjeX == j && gekliktVakjeY == i && obj.Bezet == false)
             {
-                roodList.Add(obj);
-            }
-            else if (steenList[gekliktVakjeY * aantalVakjes + i].Kleur == 1)
-            {
-                blauwList.Add(obj);
-            }
-            
-            if (gekliktVakjeX == i && gekliktVakjeY == j && obj.Bezet == false)
-            {
-                //score updaten
-                blauwStenen.Text = $"{aantalBlauweStenen} stenen";
-                roodStenen.Text = $"{aantalRodeStenen} stenen";
-
-                //wie aanzet is updaten (dus of blauw of rood aan zet is)
-                if (aanZet == 0)
-                {
-                    aanZet++;
-                    aantalRodeStenen++;
-                }
-                else if (aanZet == 1)
-                {
-                    aanZet--;
-                    aantalBlauweStenen++;
-                }
-                //score updaten
-                blauwStenen.Text = $"{aantalBlauweStenen} stenen";
-                roodStenen.Text = $"{aantalRodeStenen} stenen";
-
+                
                 //waardes van het object van deze steen aanpassen
                 obj.Bezet = true;
                 obj.Kleur = aanZet;
+                obj.Plaatsbaar = false;
 
                 //deze steen inkleuren
                 if (obj.Kleur == 0)
@@ -248,12 +354,32 @@ void mousePosition(object sender, MouseEventArgs muis)
     hier = muis.Location;
 
     int gekliktVakjeX = muis.X / breedteVakjes;
-    int gekliktVakjeY = muis.Y / breedteVakjes;    
-
-
-    tekenReversi(gekliktVakjeX, gekliktVakjeY);
+    int gekliktVakjeY = muis.Y / breedteVakjes;
 
     
+    tekenReversi(gekliktVakjeX, gekliktVakjeY);
+    
+
+    //aanZetLabel updaten naar wie er aan de beurt is\
+    if (aanZet == 0) 
+    { 
+        aanZetLabel.Text = $"Blauw is aan zet";
+        aanZet++;
+        aantalRodeStenen++;
+        roodStenen.Text = $"{aantalRodeStenen} stenen";
+    }
+    else if (aanZet == 1) 
+    { 
+        aanZetLabel.Text = $"Rood is aan zet";
+        aanZet--;
+        aantalBlauweStenen++;
+        blauwStenen.Text = $"{aantalBlauweStenen} stenen";
+       
+    }
+    placeable();
+
+
+
     scherm.Invalidate();
 
 }
