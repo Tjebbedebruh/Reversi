@@ -1,0 +1,16 @@
+C:\Users\tjell\source\repos\Reversi\Reversi\bin\Debug\net6.0-windows\Reversi.exe
+C:\Users\tjell\source\repos\Reversi\Reversi\bin\Debug\net6.0-windows\Reversi.deps.json
+C:\Users\tjell\source\repos\Reversi\Reversi\bin\Debug\net6.0-windows\Reversi.runtimeconfig.json
+C:\Users\tjell\source\repos\Reversi\Reversi\bin\Debug\net6.0-windows\Reversi.dll
+C:\Users\tjell\source\repos\Reversi\Reversi\bin\Debug\net6.0-windows\Reversi.pdb
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi2._0.Form1.resources
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi.csproj.GenerateResource.cache
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi.AssemblyInfoInputs.cache
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi.AssemblyInfo.cs
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi.csproj.CoreCompileInputs.cache
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi.dll
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\refint\Reversi.dll
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi.pdb
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\Reversi.genruntimeconfig.cache
+C:\Users\tjell\source\repos\Reversi\Reversi\obj\Debug\net6.0-windows\ref\Reversi.dll
