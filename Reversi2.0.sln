@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reversi2.0", "Reversi2.0\Reversi2.0.csproj", "{7F4A0A9B-97EB-46E9-848E-F8CB0C4D2A9D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7F4A0A9B-97EB-46E9-848E-F8CB0C4D2A9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F4A0A9B-97EB-46E9-848E-F8CB0C4D2A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F4A0A9B-97EB-46E9-848E-F8CB0C4D2A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F4A0A9B-97EB-46E9-848E-F8CB0C4D2A9D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFF5360F-8B82-41BC-BD2A-52B90333ACE4}
+	EndGlobalSection
+EndGlobal
